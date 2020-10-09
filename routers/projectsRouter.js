@@ -1,7 +1,10 @@
 const express = require('express');
 const projects = require('../data/helpers/projectModel');
+const actions = require('../data/helpers/actionModel');
 const router = express.Router();
 
+
+// Project endpoints
 router.get('/projects/:id', validateProjectId(), (req, res) => {
     return res.status(200).json(req.project)
 })
@@ -10,6 +13,22 @@ router.post('/projects', validatePost(), (req, res, next) => {
     projects.insert(req.body)
     .then(project => {
         return res.status(201).json(project)
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
+router.put('/projects/:id', validateProjectId(), validatePost(), (req, res, next) => {
+    projects.update(req.params.id, req.body)
+    .then(project => {
+        if(project) {
+            return res.status(200).json(project)
+        } else {
+            return res.status(400).json({
+                message: "The project could not be found"
+            })
+        }
     })
     .catch(error => {
         next(error)
