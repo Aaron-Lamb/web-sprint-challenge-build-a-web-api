@@ -88,6 +88,24 @@ router.put('/projects/:projectid/actions/:id', validateActionId(), validateActio
     })
 })
 
+router.delete('/projects/:projectid/actions/:id', validateActionId(), (req, res, next) => {
+    actions.remove(req.params.id)
+    .then(action => {
+        if(action > 0) {
+            return res.status(200).json({
+                message: "Action was deleted"
+            })
+        } else {
+            return res.status(404).json({
+                errorMessage: "There was a problem deleting the action"
+            })
+        }
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
 // Custom Middleware
 function validateProjectId() {
     return (req, res, next) => {
