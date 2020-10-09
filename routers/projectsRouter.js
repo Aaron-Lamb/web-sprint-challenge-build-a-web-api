@@ -16,15 +16,12 @@ function validateProjectId() {
             next()
         } else {
             return res.status(404).json({
-                errorMessage: "Some helpful error message"
+                errorMessage: "Invalid project id"
             })
         }
     })
     .catch(error => {
-        console.log(error)
-        return res.status(400).json({
-            message: 'invalid project id'
-        })
+        next(error)
     })
     }
 }
