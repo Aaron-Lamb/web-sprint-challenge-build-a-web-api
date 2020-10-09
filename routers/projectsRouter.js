@@ -35,6 +35,24 @@ router.put('/projects/:id', validateProjectId(), validatePost(), (req, res, next
     })
 })
 
+router.delete('/projects/:id', validateProjectId(), (req, res, next) => {
+    projects.remove(req.params.id)
+    .then(project => {
+        if(project > 0) {
+            return res.status(200).json({
+                message: "The project was deleted"
+            })
+        } else {
+            return res.status(404).json({
+                errorMessage: "There was an error deleting the project"
+            })
+        }
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
 // Custom Middleware
 function validateProjectId() {
     return (req, res, next) => {
