@@ -58,10 +58,30 @@ router.get('/projects/:id/actions', validateProjectId(), (req, res, next) => {
     return res.status(200).json(req.project.actions)
 })
 
+router.get('/projects/:projectid/actions/:id', validateActionId(), (req, res, next) => {
+    return res.status(200).json(req.action)
+})
+
 router.post('/projects/:id/actions', validateProjectId(), validateAction(), (req, res, next) => {
     actions.insert(req.body)
     .then(action => {
         return res.status(201).json(action)
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
+router.put('/projects/:projectid/actions/:id', validateActionId(), validateAction(), (req, res, next) => {
+    actions.update(req.params.id, req.body)
+    .then(action => {
+        if(action) {
+            return res.status(200).json(action)
+        } else {
+            return res.status(400).json({
+                message: "The action could not be found"
+            })
+        }
     })
     .catch(error => {
         next(error)
@@ -79,6 +99,25 @@ function validateProjectId() {
         } else {
             return res.status(404).json({
                 errorMessage: "Invalid project id"
+            })
+        }
+    })
+    .catch(error => {
+        next(error)
+    })
+    }
+}
+
+function validateActionId() {
+    return (req, res, next) => {
+    actions.get(req.params.id)
+    .then(action => {
+        if(action) {
+            req.action = action
+            next()
+        } else {
+            return res.status(404).json({
+                errorMessage: "Invalid action id"
             })
         }
     })
