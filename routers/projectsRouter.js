@@ -53,6 +53,21 @@ router.delete('/projects/:id', validateProjectId(), (req, res, next) => {
     })
 })
 
+// Actions CRUD
+router.get('/projects/:id/actions', validateProjectId(), (req, res, next) => {
+    return res.status(200).json(req.project.actions)
+})
+
+router.post('/projects/:id/actions', validateProjectId(), validateAction(), (req, res, next) => {
+    actions.insert(req.body)
+    .then(action => {
+        return res.status(201).json(action)
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
 // Custom Middleware
 function validateProjectId() {
     return (req, res, next) => {
@@ -86,6 +101,34 @@ function validatePost() {
         } else if(!req.body.description) {
             return res.status(400).json({
                 errorMessage: "Missing description field"
+            })
+        } else {
+            next()
+        }
+    }
+}
+
+function validateAction () {
+    return (req, res, next) => {
+        if(Object.keys(req.body).length === 0) {
+            return res.status(400).json({
+                errorMessage: "missing action data"
+            })
+        } else if(!req.body.project_id) {
+            return res.status(400).json({
+                errorMessage: "Missing project id field"
+            })
+        } else if(!req.body.description) {
+            return res.status(400).json({
+                errorMessage: "Missing description field"
+            })
+        } else if(req.body.description.length > 128){
+            return res.status(400).json({
+                errorMessage: "Description is too long"
+            })
+        } else if(!req.body.notes) {
+            return res.status(400).json({
+                errorMessage: "Missing notes field"
             })
         } else {
             next()
