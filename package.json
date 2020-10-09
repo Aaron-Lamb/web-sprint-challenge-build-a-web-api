@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "Node API Challenge",
     "main": "index.js",
+    "engines": {
+        "node": "12.x"
+    },
     "scripts": {
         "db:seed": "knex seed:run",
         "server": "nodemon --require dotenv/config index.js",
