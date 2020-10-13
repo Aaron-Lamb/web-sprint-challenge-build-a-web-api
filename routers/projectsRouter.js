@@ -5,6 +5,22 @@ const router = express.Router();
 
 
 // Project endpoints
+router.get('/projects', (req, res, next) => {
+    projects.get()
+    .then(response => {
+        if(response) {
+            return res.status(200).json(response)
+        } else {
+            return res.status(404).json({
+                errorMessage: "Could not find the projects"
+            })
+        }
+    })
+    .catch(error => {
+        next(error)
+    })
+})
+
 router.get('/projects/:id', validateProjectId(), (req, res) => {
     return res.status(200).json(req.project)
 })
